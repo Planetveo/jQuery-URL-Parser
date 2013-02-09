@@ -133,6 +133,9 @@
     }
 
     function parseString(str) {
+        if (str == '')
+            return {};
+
         return reduce(String(str).split(/&|;/), function(ret, pair) {
             try {
                 pair = decodeURIComponent(pair.replace(/\+/g, ' '));
@@ -194,6 +197,10 @@
         }
         return keys;
     }
+
+    function isPlainObject(o) {
+         return Object(o) === o && Object.getPrototypeOf(o) === Object.prototype;
+    }
         
     function purl( url, strictMode ) {
         if ( arguments.length === 1 && url === true ) {
@@ -213,9 +220,21 @@
                 return typeof attr !== 'undefined' ? this.data.attr[attr] : this.data.attr;
             },
             
-            // return query string parameters
-            param : function( param ) {
-                return typeof param !== 'undefined' ? this.data.param.query[param] : this.data.param.query;
+            // get or set query string parameters
+            param : function(param, value) {
+                if (isPlainObject(param)) {
+                    this.data.param.query = param;
+                    return this;
+                } else if (value == undefined) {
+                    return typeof param !== 'undefined' ? this.data.param.query[param] : this.data.param.query;
+                } else {
+                    this.data.param.query[param] = value;
+                    return this;
+                }
+            },
+
+            removeParam: function(param) {
+                delete this.data.param.query[param];
             },
             
             // return fragment parameters
@@ -241,10 +260,44 @@
                     seg = seg < 0 ? this.data.seg.fragment.length + seg : seg - 1; // negative segments count from the end
                     return this.data.seg.fragment[seg];                    
                 }
+            },
+
+            // Return generated url from object data
+            toString: function() {
+                var buffer = "";
+                if (this.data.attr.host !== '') {
+                    buffer += this.data.attr.protocol + '://' + this.data.attr.host;
+                }
+                if (this.data.attr.port !== '80') {
+                    buffer += ':' + this.data.attr.port;
+                }
+                buffer += this.data.attr.path;
+                if (Object.keys(this.data.param.query).length > 0) {
+                    buffer += '?';
+                    var params_buffer = [];
+                    for(var p in this.data.param.query) {
+                        params_buffer.push(p + '=' + this.data.param.query[p]);
+                    }
+                    buffer += params_buffer.join('&');
+                }
+                if (Object.keys(this.data.param.fragment).length > 0) {
+                    buffer += '#';
+
+                    var fragments_buffer = [];
+                    for(var p in this.data.param.fragment) {
+                        if (this.data.param.fragment[p] === '') {
+                            fragments_buffer.push(p);
+                        } else {
+                            fragments_buffer.push(p + '=' + this.data.param.fragment[p]);
+                        }
+                    }
+                    buffer += fragments_buffer.join('&');
+                }
+
+                return buffer;
             }
             
         };
-    
     };
     
     if ( typeof $ !== 'undefined' ) {
@@ -258,9 +311,7 @@
         };
         
         $.url = purl;
-        
     } else {
         window.purl = purl;
     }
-
 });
