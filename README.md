@@ -50,6 +50,7 @@ The attributes available for querying are:
     <tr><td>protocol</td><td>eg. http, https, file, etc</td></tr>
     <tr><td>host</td><td>eg. www.mydomain.com, localhost etc</td></tr>
     <tr><td>port</td><td>eg. 80</td></tr>
+    <tr><td>base</td><td>The url base (eg. http://www.mydomain.com, https://www.mydomain.com etc)</td></tr>
     <tr><td>relative</td><td>The relative path to the file including the querystring (eg. /folder/dir/index.html?item=value)</td></tr>
     <tr><td>path</td><td>The path to the file (eg. /folder/dir/index.html)</td></tr>
     <tr><td>directory</td><td>The directory part of the path (eg. /folder/dir/)</td></tr>
