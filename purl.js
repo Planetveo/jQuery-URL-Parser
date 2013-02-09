@@ -9,7 +9,7 @@
     if (typeof define === 'function' && define.amd) {
         // AMD available; use anonymous module
         if ( typeof jQuery !== 'undefined' ) {
-            define(['jquery'], factory);    
+            define(['jquery'], factory);
         } else {
             define([], factory);
         }
@@ -54,16 +54,16 @@
             uri.attr[ key[i] ] = res[i] || '';
         }
         
-        // build query and fragment parameters      
+        // build query and fragment parameters
         uri.param['query'] = parseString(uri.attr['query']);
         uri.param['fragment'] = parseString(uri.attr['fragment']);
         
-        // split path and fragement into segments       
-        uri.seg['path'] = uri.attr.path.replace(/^\/+|\/+$/g,'').split('/');     
+        // split path and fragement into segments
+        uri.seg['path'] = uri.attr.path.replace(/^\/+|\/+$/g,'').split('/');
         uri.seg['fragment'] = uri.attr.fragment.replace(/^\/+|\/+$/g,'').split('/');
         
-        // compile a 'base' domain attribute        
-        uri.attr['base'] = uri.attr.host ? (uri.attr.protocol ?  uri.attr.protocol+'://'+uri.attr.host : uri.attr.host) + (uri.attr.port ? ':'+uri.attr.port : '') : '';      
+        // compile a 'base' domain attribute
+        uri.attr['base'] = uri.attr.host ? (uri.attr.protocol ?  uri.attr.protocol+'://'+uri.attr.host : uri.attr.host) + (uri.attr.port ? ':'+uri.attr.port : '') : '';
           
         return uri;
     };
@@ -75,7 +75,7 @@
     }
     
     function promote(parent, key) {
-        if (parent[key].length == 0) return parent[key] = {};
+        if (parent[key].length === 0) return parent[key] = {};
         var t = {};
         for (var i in parent[key]) t[i] = parent[key][i];
         parent[key] = t;
@@ -248,17 +248,17 @@
                     return this.data.seg.path;
                 } else {
                     seg = seg < 0 ? this.data.seg.path.length + seg : seg - 1; // negative segments count from the end
-                    return this.data.seg.path[seg];                    
+                    return this.data.seg.path[seg];
                 }
             },
             
             // return fragment segments
             fsegment : function( seg ) {
                 if ( typeof seg === 'undefined' ) {
-                    return this.data.seg.fragment;                    
+                    return this.data.seg.fragment;
                 } else {
                     seg = seg < 0 ? this.data.seg.fragment.length + seg : seg - 1; // negative segments count from the end
-                    return this.data.seg.fragment[seg];                    
+                    return this.data.seg.fragment[seg];
                 }
             },
 
@@ -272,11 +272,21 @@
                     buffer += ':' + this.data.attr.port;
                 }
                 buffer += this.data.attr.path;
+
+                Object.keys = Object.keys || function(o) {
+                    var result = [];
+                    for(var name in o) {
+                        if (o.hasOwnProperty(name))
+                          result.push(name);
+                    }
+                    return result;
+                };
+
                 if (Object.keys(this.data.param.query).length > 0) {
                     buffer += '?';
                     var params_buffer = [];
                     for(var p in this.data.param.query) {
-                        params_buffer.push(p + '=' + this.data.param.query[p]);
+                        params_buffer.push(encodeURIComponent(p) + '=' + encodeURIComponent(this.data.param.query[p]));
                     }
                     buffer += params_buffer.join('&');
                 }
@@ -306,7 +316,7 @@
             var url = '';
             if ( this.length ) {
                 url = $(this).attr( getAttrName(this[0]) ) || '';
-            }    
+            }
             return purl( url, strictMode );
         };
         
