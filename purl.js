@@ -145,7 +145,8 @@
             var eql = pair.indexOf('='),
                 brace = lastBraceInKey(pair),
                 key = pair.substr(0, brace || eql),
-                val = pair.substr(brace || eql, pair.length).substr(val.indexOf('=') + 1, val.length);
+                val = pair.substr(brace || eql, pair.length),
+                val = val.substr(val.indexOf('=') + 1, val.length);
 
             if ('' == key) key = pair, val = '';
 
